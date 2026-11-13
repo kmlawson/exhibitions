@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exhibitions and World's Fairs</title>
+<style>
+  :root { --bg: #faf8f4; --fg: #22201c; --muted: #6b665d; --line: #ddd6c8; --accent: #9b2c2c; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1b1a18; --fg: #ece8df; --muted: #a39d91; --line: #3a3732; --accent: #e08a7d; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.55 Georgia, "Times New Roman", serif; }
+  main { max-width: 40rem; margin: 0 auto; padding: 3rem 16px; }
+  h1 { font-size: 1.7rem; margin: 0 0 .5rem; }
+  p { color: var(--muted); margin: 0 0 2rem; }
+  a.card { display: block; padding: 1rem 1.2rem; margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 6px; color: inherit; text-decoration: none; }
+  a.card:hover { border-color: var(--accent); }
+  a.card b { color: var(--accent); font-size: 1.15rem; }
+  a.card span { display: block; color: var(--muted); font-size: .95rem; }
+  ul { color: var(--muted); font-size: .95rem; padding-left: 1.2rem; }
+  ul a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Exhibitions and World's Fairs</h1>
+  <p>A research aid compiled from about fifty-five scholarly books and articles on the history of exhibitions.</p>
+  <a class="card" href="timeline.html"><b>Timeline and map</b>
+    <span>845 national and international exhibitions mentioned in the texts, including fairs that were planned but never held.</span></a>
+  <a class="card" href="bibliography.html"><b>Bibliography</b>
+    <span>9,431 works cited across the texts, merged and deduplicated, with citation counts and Zotero import.</span></a>
+  <ul>
+    <li>Data: <a href="timeline.csv">timeline.csv</a>, <a href="timeline_mentions.csv">timeline_mentions.csv</a>, <a href="bibliography.csv">bibliography.csv</a></li>
+    <li>Entries were extracted by machine reading and have not been checked one by one. Facts come only from the texts; a blank means no text gave the value.</li>
+  </ul>
+</main>
+</body>
+</html>
