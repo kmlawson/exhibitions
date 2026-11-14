@@ -1,7 +1,7 @@
 # Exhibitions and World's Fairs: a research aid
 
 Built from about 55 scholarly books and articles on the history of exhibitions (the PDFs and
-epubs in this folder and in `second-wave/`, which are not in the repository).
+epubs in `books/`, which are not in the repository).
 
 **For how any of this was made, what the files contain, how to rebuild it, and what is known to
 be unreliable, read [`TECHNICAL.md`](TECHNICAL.md).** Anyone continuing the work, including a

@@ -418,7 +418,8 @@ To add more: put further `batch_KK.jsonl` files in `uc/out/` (same format), then
 ## 5. Publishing
 
 The project folder is a git repository (`main`, remote `origin` on GitHub, Pages served from
-the branch root). `.gitignore` excludes the books, `second-wave/` and `pipeline/`. `pipeline/`
+the branch root). `.gitignore` excludes the books (all in `books/` since 14 November 2026; before that in the
+project folder and `second-wave/`) and `pipeline/`. `pipeline/`
 is excluded because its briefs contain local paths and its notes hold extended material derived
 from the books; publish it only deliberately.
 
