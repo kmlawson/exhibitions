@@ -181,7 +181,7 @@ function rowHTML(r, i, a, t){
   const idx = R.indexOf(r);
   let h = `<tr class="r${sel === idx ? " sel" : ""}" data-i="${idx}"><td class="c"><span class="cnt">${r[10]}</span><span class="bar" style="width:${Math.max(3, Math.round(r[10]/maxC*52))}px"></span></td>`
     + `<td class="a">${r[1] ? hl(r[1],a) : '<span class="tr">—</span>'}</td><td class="y">${esc(r[2])}</td>`
-    + `<td class="t">${r[14] ? `<span class="dot" title="${r[14] === 1 ? "This work is in our folder" : "Chapter of a volume that is in our folder"}"></span>` : ""}${title}${tr}${pub ? `<span class="pub">${pub}</span>` : ""}${sel < 0 ? coins(r) : ""}</td>`
+    + `<td class="t">${r[14] ? `<span class="dot" title="${r[14] === 1 ? "This work is in our folder" : "Chapter of a volume that is in our folder"}"></span>` : ""}${title}${tr}${pub ? `<span class="pub">${pub}</span>` : ""}</td>`
     + `<td class="k">${esc(r[5])}</td><td class="s"><span class="pill s${r[0]}">${SN[r[0]]}</span></td></tr>`;
   if(sel === idx) h += `<tr class="x"><td colspan="6"><span class="lab">Cited in ${r[10]} of the ${Object.keys(SRC).length - 0} texts</span><ul>${r[12].map(s => `<li>${esc(SRC[s])}</li>`).join("")}</ul>`
     + (r[11] > r[10] ? `<div>${r[11]} citations counting separate chapters of edited volumes.</div>` : "")
@@ -196,10 +196,11 @@ function render(){
   $("selcoins").innerHTML = sel >= 0 ? coins(R[sel]) : "";
   if(sel >= 0) $("status").textContent = "Selected: " + (R[sel][1] ? R[sel][1] + ", " : "") + R[sel][3] + " — Zotero will save this one item (click it again to deselect) · " + $("status").textContent.split(" · ")[0];
   saveState();
-  // The Zotero browser connector reads the page's citation records once, when the page loads. Tell it that they have
-  // changed (a row was selected or the list was filtered), otherwise its toolbar button keeps the stale state.
-  // Sent at once if none went out in the last 3 seconds, otherwise once that time is up: each one makes the connector re-scan the page.
-  clearTimeout(render.z); render.z = setTimeout(() => { render.zt = Date.now(); try { document.dispatchEvent(new Event("ZoteroItemUpdated", {bubbles:true, cancelable:true})); } catch(e){} }, Math.max(60, 3000 - (Date.now() - (render.zt || 0))));
+  // The page carries a citation record (COinS) for the selected row only, never for the whole list. The Zotero browser
+  // connector reads a page once, when it loads, so tell it whenever the selection changes (at once if no signal went out
+  // in the last 3 seconds, otherwise once that time is up: each signal makes the connector look at the page again).
+  if(render.zs !== sel){ render.zs = sel;
+    clearTimeout(render.z); render.z = setTimeout(() => { render.zt = Date.now(); try { document.dispatchEvent(new Event("ZoteroItemUpdated", {bubbles:true, cancelable:true})); } catch(e){} }, Math.max(60, 3000 - (Date.now() - (render.zt || 0)))); }
   $("more").hidden = rows.length <= limit;
   $("more").textContent = `Show all ${rows.length.toLocaleString()} (showing ${Math.min(limit, rows.length)})`;
   document.querySelectorAll("th").forEach(th => th.querySelector(".arr").textContent = (+th.dataset.k === sortK) ? (sortDir > 0 ? "▲" : "▼") : "");
