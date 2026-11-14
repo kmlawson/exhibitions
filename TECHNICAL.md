@@ -14,7 +14,9 @@ folder, so they run from `pipeline/` as they ran in the scratch folder.
   memory; conflicts between texts are reported, not settled.
 - Reading was delegated to small-model ("haiku") sub-agents, at most 20 at once. Budgets set by
   the owner: 100 agents for the timeline (91 used), 200 for the study pages (188 used),
-  215 for the contents page (217 used, the two extra taken from the study-page remainder).
+  215 for the contents page (217 used, the two extra taken from the study-page remainder),
+  6 for a second pass on primary sources, 59 for deepening the essays, 200 for the East and
+  Southeast Asia pages.
 - Wikipedia/Wikidata: few, batched, cached, sequential requests from one script, with a
   non-identifying user-agent. Internet Archive: searched only with the `ia` command-line tool,
   slowly, with caps per agent. No personal details in any request.
@@ -154,6 +156,35 @@ as a whole" (book overview, Asia note and level from `toc/book/NN.json`). No age
 for this step; the overviews describe whole chapters, not only what they say about the fair,
 and the third group is a keyword match that can include chapters mentioning the fair in passing.
 Two pages have no guide (no chapter matched).
+
+### 4.7 Deepening the essays
+One agent per fair (59; brief `DEEP_BRIEF.md`) was given `deep_in/<id>.txt` (from `deep_pack.py`:
+the chapters that treat the fair, with file and line range and overview, followed by the essay as
+it stood) and told to read the most relevant chapters in the full text and write ADDITIONS, not a
+rewrite: `deep/<id>.md` with `# MORE` (new sections, or paragraphs under an existing section
+heading copied exactly), optional `# ASIA`, and `# QUESTIONS`. `build.py` merges them: a heading
+equal to an existing one appends its paragraphs to that section; a new heading becomes a section
+placed before "How historians have interpreted it". Citations in the additions may name any text
+(a text without an annotation on the page links to the contents page instead).
+
+Result: about 56,000 added words and 2,727 citations (essays now about 140,000 words in all).
+`deepcheck.py` (→ `deep_check.json`) tests every citation: all point to existing lines; 163 of 164
+quotations occur verbatim in a cited text, and the one that does not (line broken by a column
+fault in the extraction) is printed without quotation marks; for 102 citations (4%) no name or
+number from the sentence occurs within about 50 lines of the cited line, mostly sentences that
+summarise an argument. Agents read less than asked (typically 1,000-3,000 lines) where the texts
+say little about a fair.
+
+**What the agents found wrong in the earlier essays (not corrected; the additions state the
+disagreement in the text):** figures that differ between texts (e.g. 245 against 254 competition
+designs for 1851; cholera deaths and site size at Vienna 1873; Trylon height and Democracity
+population at New York 1939; Soviet budget and attendance at Brussels 1958); statements the
+cited text does not support (who built the Paris 1855 fine arts palace; Shantyville placed at
+New York 1853 instead of Philadelphia 1876; Douglass at the 1876 opening; the labour agreement at
+San Francisco 1915; who organised Negro Day at Chicago 1933); and a number of citations whose
+line number is a few lines off or names the wrong text (Antwerp 1930 "most lavish display"
+belongs to text 39, not 35; several in Paris 1937 and Brussels 1958). The agents' final reports
+with the full lists are in the session transcript, not in `pipeline/`.
 
 ## 4a. Contents page (`contents.html`)
 
