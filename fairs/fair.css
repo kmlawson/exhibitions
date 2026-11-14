@@ -101,3 +101,9 @@ details.abw p{font-size:15px;margin:8px 0 0}
 .st{font:600 11px/1.6 -apple-system,"Helvetica Neue",Arial,sans-serif;font-style:normal;border:1px solid var(--line);border-radius:999px;padding:0 7px;color:var(--muted);white-space:nowrap;text-transform:none;letter-spacing:0}
 
 a.pg{color:var(--muted);text-decoration:none}a.pg:hover{filter:brightness(1.15)}.pg.pdf{background:transparent}
+
+/* study-pages index: cities in the East and Southeast Asia list coloured by country (Southeast Asia as one) */
+:root{--c-jp:#b3303a;--c-kr:#285fa8;--c-cn:#2c7a4b;--c-sea:#7b449c}
+@media (prefers-color-scheme:dark){:root{--c-jp:#f08a8f;--c-kr:#8db8f2;--c-cn:#7fce9c;--c-sea:#c9a0e6}}
+.row .c.c-jp,.key .c-jp{color:var(--c-jp)}.row .c.c-kr,.key .c-kr{color:var(--c-kr)}.row .c.c-cn,.key .c-cn{color:var(--c-cn)}.row .c.c-sea,.key .c-sea{color:var(--c-sea)}
+.key{font:600 12.5px -apple-system,"Helvetica Neue",Arial,sans-serif;margin:2px 0 6px}.key span{margin-right:14px;white-space:nowrap}
