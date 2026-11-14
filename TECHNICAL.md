@@ -78,14 +78,19 @@ bibliography, its notes were not mined. Extraction was not verified entry by ent
 
 Page behaviour worth knowing: fairs opening after 1990 are in the data but hidden (`CUT` in the
 template); map dots use five fixed classes (1, 2-4, 5-9, 10-19, 20+ fairs); pinch zoom and
-tap-to-filter work on touch screens; tapping a city scrolls to the filtered list.
+tap-to-filter work on touch screens; tapping a city scrolls to the filtered list. Dots keep a
+minimum size on screen at every zoom (4.5 px radius, 6 px on touch screens) and a tap or click that
+misses selects the nearest dot within reach (24 px for a finger, 9 px for a mouse). The year
+slider's handles have a grab area as tall as the slider (36 px; 52 px on touch or narrow screens)
+and a tap on the track moves the nearer handle.
 
 Caveats: 207 entries are low confidence and 208 are flagged borderline; a mention records that a
 text names a fair, not how much it says.
 
 ## 4. Study pages (`fairs/*.html`)
 
-Scope: the 59 fairs dated 1800-1970 with ten or more citing texts, and (section 4.8) 71 exhibitions
+Scope: the 59 fairs dated 1800-1970 with ten or more citing texts, (section 4.9) 88 imperial and colonial
+exhibitions with two or more citing texts, and (section 4.8) 71 exhibitions
 in East and Southeast Asia. All files are in `fp/`.
 
 ### 4.1 Dossiers (not saved)
@@ -228,6 +233,45 @@ Things found on the way:
 - The Osaka 2025 essay misread an attendance figure for the earlier Osaka expo as 2025's and
   was corrected by hand; other pages were not read by a person.
 
+### 4.9 Pages for imperial and colonial exhibitions
+
+Added 14 November 2026: 88 pages for fairs that had no page, are cited by two or more texts, and have an
+imperial or colonial side. The list (`tmp/colonial_nopage.json`, made by a one-off script) took every such fair
+that the timeline classes as colonial, that was held in a colony before 1960 or in Australia, New Zealand or
+Canada before 1931, or whose name or description uses words such as colonial, empire, imperial or India; six
+false hits were removed by hand. For about thirty of the 88 the connection is slight (a colonial section, or a
+word in the timeline description), and for a few the texts turned out to show none: those pages say so.
+
+- Keys: `fp/mk_emp_keys.py` → `fp/keys_emp.py` (`KE`), then edited by hand (over-broad name patterns removed, the
+  monograph on London 1910 marked), so do not regenerate it. `fp/keys.py` exposes `EMP_IDS` and
+  `SMALL_IDS` (Asia + imperial pages).
+- One haiku agent per fair (88): brief `fp/EMP_BRIEF.md`, the Asia brief with a compulsory section "Empire and
+  colony". Input: `fp/dossier/<id>/part_1.txt` and `fp/asia_in/<id>.txt` (`fp/asia_pack.py <ids>`). Output:
+  `fp/notes/<id>_p1.jsonl`, `fp/essay/<id>.md`.
+- Check (`ASIA=1 python3 fp/deepcheck.py <ids>`, results merged into `fp/asia_check.json`): about 60,600 words,
+  3,369 line citations, none pointing at a missing line or unknown text; 17 of 204 quotations did not match
+  the source and are shown without quotation marks.
+- Web and primary sources: 22 haiku agents, four fairs each (`fp/EMPWEB_BRIEF.md`, `fp/empweb/group_KK.txt`);
+  after `fp/verify.py`, 128 web resources and 166 primary sources on 75 pages; 13 pages have none.
+- Wikipedia introductions for 38 pages (`fp/wiki_emp.py`, three batched requests; titles taken from the saved
+  "List of world's fairs").
+- `fp/build.py` lists them in a third group on `fairs/index.html`.
+
+Known weaknesses:
+
+- **Text 33 (Maxwell, *Colonial Photography and Exhibitions*) was not used.** It is a scan without a text
+  layer, so the agents could not read it, although the timeline cites it for several of these fairs.
+- Eleven pages are under 300 words because the texts only list the fair (usually in the "Fairs Not Included"
+  appendix of the Findling and Pelle reference works).
+- The agents were told to use nothing but the texts, so where the texts do not say that a place was a colony
+  the "Empire and colony" section says the texts show no connection, even for a fair held in a colony. The
+  facts box on the page still gives the country as the timeline has it.
+- The agents reported many points where the texts do not support the timeline record (scope labels above
+  all, also dates, visitor figures and names). These reports are in the session transcript only; the timeline
+  has not been corrected.
+- The 22 web agents ran up to 20 at a time, each with up to 12 Internet Archive searches. No request was
+  refused, but this was parallel use of archive.org and should be staggered next time.
+
 ## 4a. Contents page (`contents.html`)
 
 All files are in `toc/`. Agents used: 217 (budget 215 + 12 left from the study pages).
@@ -311,6 +355,65 @@ which only one was corrected.
   (`#/DocumentDetails_ts_da?fileCode=…` for books, `DocumentDetails_qk` for periodicals); the site
   is a single-page application, so a link check cannot tell a good record address from a bad one.
 - Neither set was read: descriptions rest on catalogue titles.
+
+## 4d. Exhibitions not in the texts (`uc/`, timeline "Show" control)
+
+Added 14 November 2026. The timeline shows by default only fairs that at least one text
+mentions. A second set, kept apart in the data (ids `W0001`…, empty list of texts), holds
+exhibitions of 1850–1950 known from Wikipedia or other online sources. The "Show" control on
+the timeline offers "cited in our texts" (default), "all, including not cited" and "not cited
+in our texts". Uncited entries have a dotted left edge and a "not in our texts" tag, list their
+online sources in place of the texts, and places with only uncited fairs are drawn as pale
+dashed dots. They never count towards the figures in the page header.
+
+How the first list (306 entries) was made:
+
+1. `uc/cities.json`: a hand-made list of 258 larger cities of the period; the 202 with two or
+   fewer held exhibitions 1850–1950 in the timeline were searched.
+2. `uc/wikilist.json`: Wikipedia's English "List of world's fairs", fetched once and parsed
+   (436 entries for 1850–1950; about 160 had no counterpart in the timeline). The Japanese
+   article 博覧会 supplied a list of expositions in Japan.
+3. 19 haiku agents (`uc/UC_BRIEF.md`, input `uc/in/batch_KK.txt`, output `uc/out/`), about 11
+   cities each, searched the web in English and local languages, were told to check the
+   Wikipedia entries ("seeds") against another source, to return only distinct exhibitions with
+   a source they had seen, and not to contact Wikipedia themselves. They returned 211 events.
+4. `uc/merge.py` drops events outside 1850–1950, events the timeline already has (same city
+   under any of its names, year within one, similar name), and duplicates; it adds the
+   Wikipedia-list entries no agent returned. `uc/checklinks.py` requested each of the 256 source
+   links once: 218 answered 200, 2 were dead and were removed, the rest refused a script or
+   timed out and were kept. `uc/finalize.py` confirms Wikipedia article titles and looks up
+   coordinates in batches, assigns regions and ids, and writes `uc/uncited.json`, which
+   `tl/export.py` adds to `timeline.html` and writes out as `timeline_not_in_texts.csv`.
+
+What to know about its quality:
+
+- 132 entries were found by web search alone, 63 by web search and also in a Wikipedia list, and
+  111 rest on a Wikipedia list only (column `found_by`); the last group has confidence "low".
+- Agents often could not open a page and worked from the search engine's summary of it; the
+  `notes` column says so entry by entry. Dates and visitor figures are the weakest fields.
+- For recurring fairs there is one entry, for the founding year.
+- The agents found nothing usable for 74 of the 202 cities, among them Beijing, Tianjin,
+  Guangzhou, Wuhan, Istanbul, Warsaw, Algiers, Lima and St. Louis. That reflects a short search,
+  not an absence of exhibitions.
+- Matching against the timeline was by city and year; an event the texts place in a different
+  city or year may appear twice.
+- Wikipedia traffic for the whole task was 9 requests. The rules for any future Wikimedia
+  lookups are in `pipeline/WIKIPEDIA.md` and enforced in `fp/wiki.py` (cache, 8 s spacing,
+  15 requests an hour, 40 a day, stop for an hour after any refusal).
+
+Hand additions go in `uc/out/batch_9x.jsonl` (any city; `batch_90` holds Stockholm 1851 and 1909, found from a
+bibliography title).
+
+**Fairs the first extraction missed (`tl/extra_cited.json`).** On 14 November 2026 the bibliography was
+screened for titles naming an exhibition that neither list had (`bibhints/screen.py`, `screen2.py`; 936 titles
+read by hand). Five turned out to be discussed in the texts and were added to the cited timeline by hand, with
+text and line references, under ids `X001`–`X005` (Mladá Boleslav 1912, the eugenics exhibitions of 1921 and
+1932 in New York, Proudhon's perpetual-exhibition project, Orvieto 1896). They live in their own file, which
+`tl/export.py` appends, so that the `F####` ids the study pages depend on never shift. The cited timeline
+therefore has 850 entries (804 up to 1990).
+
+To add more: put further `batch_KK.jsonl` files in `uc/out/` (same format), then run
+`uc/merge.py`, `uc/checklinks.py`, `uc/finalize.py` and `tl/export.py <site folder>`.
 
 ## 5. Publishing
 
