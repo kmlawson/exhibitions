@@ -85,7 +85,8 @@ text names a fair, not how much it says.
 
 ## 4. Study pages (`fairs/*.html`)
 
-Scope: the 59 fairs dated 1800-1970 with ten or more citing texts. All files are in `fp/`.
+Scope: the 59 fairs dated 1800-1970 with ten or more citing texts, and (section 4.8) 71 exhibitions
+in East and Southeast Asia. All files are in `fp/`.
 
 ### 4.1 Dossiers (not saved)
 `fp/keys.py` holds, per fair, a slug, the years, a context pattern, a "strong" name pattern and
@@ -186,6 +187,47 @@ line number is a few lines off or names the wrong text (Antwerp 1930 "most lavis
 belongs to text 39, not 35; several in Paris 1937 and Brussels 1958). The agents' final reports
 with the full lists are in the session transcript, not in `pipeline/`.
 
+### 4.8 Pages for exhibitions in East and Southeast Asia
+Scope: every exhibition in the timeline held or planned in East or Southeast Asia with at least
+one citing text, 71 beyond Osaka 1970 (51 held, 9 never held, 7 cancelled, 4 planned), including
+events after 1990 that the timeline page hides. `mk_asia_keys.py` writes `keys_asia.py` (slug,
+years, place pattern, hand-picked name pattern); `keys.py` merges it and exposes `ASIA_IDS`.
+For these fairs `dossier.py` also takes the lines the timeline sweep recorded as hits, so a fair
+named without its year is still found. `asia_pack.py` writes `asia_in/<id>.txt` (chapters that
+treat or mention the fair). One agent per fair (brief `ASIAFAIR_BRIEF.md`) read the dossier and
+the chapters, wrote `notes/<id>_p1.jsonl` and `essay/<id>.md`; length follows the sources (164 to
+1,743 words; about 38,800 in all; 41 pages rest on one text). The `# ASIA` section on these pages
+means participants and visitors from other parts of Asia and from colonies. Web research
+(`WEB_BRIEF.md`, 21 agents, several fairs per agent for the minor ones) covered about 45 fairs:
+after verification 119 primary-source links on 32 pages and 74 web resources on 29 pages; for
+many small fairs nothing reliable is online. `wiki_asia.py` resolved 21 English Wikipedia
+articles in two batched requests (the series article serves the five Japanese National
+Industrial Exhibitions). `ASIA=1 python3 deepcheck.py` → `asia_check.json`: 2,256 citations, all
+to existing lines; 138 of 141 quotations verbatim (three printed without quotation marks); 82
+citations (4%) without a nearby name or number. Agents used: 92 of 200.
+
+`build.py` shows a status label for fairs never held, cancelled or only planned, and
+`fairs/index.html` lists the pages in two groups.
+
+Things found on the way:
+- **Text 58 line numbers.** `cand/58_full.txt` contained 320 form feeds, which some tools count
+  as line breaks, and its first dossiers were cut from an older extraction. The form feeds were
+  removed (numbering by newline unchanged; page starts kept in `fp/58_pagestarts.json`);
+  `fix58.py` tested all 443 citations to text 58 and moved four.
+- **Timeline attribution.** Six mentions from text 08 (Denton) had been filed under text 09
+  (`tl/out/chunk_09.jsonl` is text 08's chunk). Patched in `tl/clusters.json` and
+  `tl/entries_final.json` (affects Nanjing 1910, Hangzhou 1929 and 2002, Shanghai 2010, New York
+  1939 and 1964); re-running `tl/final.py` would undo the patch in `entries_final.json`.
+- **Timeline records the texts do not support** (not corrected; the pages say what the texts
+  say): the 1907 "Sixth Regular Domestic Exhibition" recorded as never held may be the Tokyo
+  Industrial Exposition of 1907, which was held; Tokyo 1912 "Colonial Exposition" and "Grand
+  Japanese Exhibition" may overlap; Tianjin, Wuhan and Chengdu 1907 are one sentence about
+  local-products shows "since 1907"; Beijing 1999 and Kunming 1999 are one event that moved;
+  several "never held" or "cancelled" labels are inferences; visitor figures for Tokyo 1890 and
+  the cancelled Tokyo 1996 belong to other fairs.
+- The Osaka 2025 essay misread an attendance figure for the earlier Osaka expo as 2025's and
+  was corrected by hand; other pages were not read by a person.
+
 ## 4a. Contents page (`contents.html`)
 
 All files are in `toc/`. Agents used: 217 (budget 215 + 12 left from the study pages).
@@ -219,6 +261,56 @@ Known problems: some unit boundaries are a few lines off (noted in the `note` fi
 `sum` files); authors of the two appendices of text 39 looked swapped in the map and are not
 shown; overviews of chapters without a named author use the book's author; picture-book units
 (48, 56) are mostly captions.
+
+## 4b. Approaches page (`approaches.html`)
+
+All files are in `ap/`. Agents: 54 readers + 13 writers (taken from the unspent part of the
+200 allowed for the Asia pages).
+
+1. **Reading.** One agent per text (brief `APPROACH_BRIEF.md`; the two picture books skipped)
+   read the contents overview (`toc/bookinfo/NN.txt`) and then the introduction, conclusion and
+   theoretical passages of the full text, and wrote `appr/NN.json`: `stance`, `concepts` (name,
+   kind, author, definition, draws_on, used_for, fairs, one exact quotation with line, lines, and
+   `carries_over`, the agent's own suggestion), `against`, `methods`, `gaps`. Most agents read
+   1,000-2,500 lines, not whole books, and say so in `note`.
+2. **Grouping and checking.** `themes.py` assigns each of the 452 concepts to one of 13 themes
+   by a regular expression on its name (first match wins; the list is in the script), checks
+   every quotation against the text (all 452 occur verbatim) and every line number, and writes
+   `concepts.json`, `books.json` and `theme_in/<key>.json`.
+3. **Writing.** One agent per theme (brief `THEME_BRIEF.md`) wrote `theme/<key>.md`: INTRO,
+   STRANDS, DEBATES, CARRYING IT OVER, SEE, with citations `[NN, l. LINE]`. They worked from the
+   records and opened the texts where unsure; several say which lines they did not open.
+4. **Building.** `build_approaches.py <project dir>` writes the page: essays with page-linked
+   citations (to `contents.html#tNN`) and fair names linked to study pages; all concept cards per
+   theme (collapsible, searchable); theorists named as sources by two or more texts; the 30
+   most-cited works in the bibliography's theory section; each text's stance, opponents, methods
+   and gaps; and a list of all gaps the authors name. A quotation in an essay is kept in
+   quotation marks only if it occurs in a text cited in the same paragraph (85 of 88).
+
+Limits: a concept's theme is decided by its name, so some sit oddly; definitions report the
+author's use in that text, not the theorist's; "carrying it over" and "possible use elsewhere"
+are suggestions; the writers flagged a few records as doubtful (wrong fair attached to a
+concept, reversed line pairs, an author field naming the theorist instead of the author), of
+which only one was corrected.
+
+## 4c. Third pass for primary sources, 1880-1950
+
+- `ps/ndl_search.py`: title searches of the National Diet Library (NDL Search OpenSearch API,
+  restricted to NDL Digital Collections and to a window of years round the fair) for the
+  Japanese names of about 65 fairs, including Western fairs in which Japan took part; a
+  candidate is kept only if its IIIF manifest exists, which is the case only for items open to
+  the public internet. Sequential, cached in `ps/ndl/`, stops on any error; the API answered 429
+  after about forty requests at 3-5 second spacing, so it was resumed at 16 and 8 seconds.
+  `ps/ndl_merge.py` adds the finds to `fp/web/<id>.json` (`"added": "third pass (NDL)"`). The
+  Japanese names in the script are search terms supplied editorially.
+- modernhistory.org.cn (近代史资料数据库): title searches through its search endpoint for the
+  Chinese exhibitions and for fairs in which China took part; results in `ps/mh/`. Eighteen
+  records chosen by hand from the titles were added to seven pages (Nanjing 1910, Hangzhou 1929,
+  San Francisco 1915, Philadelphia 1926, Tokyo 1914, and reports of Wuhan and Chengdu fairs whose
+  records give no date). Page addresses use the route the site itself builds
+  (`#/DocumentDetails_ts_da?fileCode=…` for books, `DocumentDetails_qk` for periodicals); the site
+  is a single-page application, so a link check cannot tell a good record address from a bad one.
+- Neither set was read: descriptions rest on catalogue titles.
 
 ## 5. Publishing
 
