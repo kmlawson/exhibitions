@@ -56,7 +56,7 @@ bibliography purposes. Text 33 has no text layer.
    columns, citation bars, single-row selection that exposes one COinS record for Zotero, a blue
    dot for works held in the folder (`held.json`).
 
-Result: 9,431 works (3,995 secondary, 1,029 theory, 4,407 primary). Where a text has a
+Result: 9,447 works (3,995 secondary, 1,029 theory, 4,407 primary). Where a text has a
 bibliography, its notes were not mined. Extraction was not verified entry by entry.
 
 ## 3. Timeline (`timeline.csv`, `timeline_mentions.csv`, `timeline.html`)
@@ -86,6 +86,14 @@ and a tap on the track moves the nearer handle.
 
 Caveats: 207 entries are low confidence and 208 are flagged borderline; a mention records that a
 text names a fair, not how much it says.
+
+**Our own texts in the bibliography (14 November 2026).** The bibliography lists works the texts cite, so
+16 of the 57 texts we hold had no entry of their own (mostly works of 2012-2021 that the older texts could
+not cite). `add_own.py <site folder>` adds them to `final.json` and `bibliography.csv` with a citation count
+of 0 and a note; run it after `merge.py`. Details of the five articles come from their own first pages; the
+Kaiser chapter's volume is not named in our file and is left blank. The page lists these entries at the
+default setting although no text cites them. The page carries a COinS record for Zotero only for the selected
+row and signals the Zotero connector (`ZoteroItemUpdated`) when the selection changes.
 
 ## 4. Study pages (`fairs/*.html`)
 
